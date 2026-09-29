@@ -8,10 +8,32 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           Int            @id @default(autoincrement())
+  name         String
+  userId       String?        @unique
+  email        String?        @unique
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  authIdentity AuthIdentity[]
+}
+
+model AuthIdentity {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  provider       AuthProvider
+  providerUserId String?
+  passwordHash   String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerUserId])
+}
+
+enum AuthProvider {
+  LOCAL
+  GOOGLE
+  APPLE
 }
