@@ -1,7 +1,12 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
+
+import * as bcrypt from 'bcrypt';
+
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/user.dto';
-import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -12,6 +17,7 @@ export class UsersService {
       select: {
         id: true,
         name: true,
+        userId: true,
         email: true,
         createdAt: true,
         updatedAt: true,
@@ -20,41 +26,71 @@ export class UsersService {
   }
 
   async createUser(createUserDto: CreateUserDto) {
-    const { name, email, password } = createUserDto;
+    const {
+      name,
+      userId,
+      password,
+      confirmPassword,
+    } = createUserDto;
 
+    // Check password confirmation
+    if (password !== confirmPassword) {
+      throw new ConflictException(
+        'Password and confirm password do not match',
+      );
+    }
+
+    // Check if userId already exists
     const existingUser = await this.prisma.user.findUnique({
       where: {
-        email,
+        userId,
       },
     });
 
     if (existingUser) {
-      throw new ConflictException('User with this email already exists');
+      throw new ConflictException(
+        'User with this user ID already exists',
+      );
     }
 
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
+    // Create User + LOCAL AuthIdentity
     return this.prisma.user.create({
       data: {
         name,
-        email,
-        password: hashedPassword,
+        userId,
+
+        authIdentity: {
+          create: {
+            provider: 'LOCAL',
+            passwordHash: hashedPassword,
+          },
+        },
       },
+
       select: {
         id: true,
         name: true,
-        email: true,
+        userId: true,
         createdAt: true,
       },
     });
   }
 
-  async findByEmail(email: string) {
-  return this.prisma.user.findUnique({
-    where: {
-      email,
-    },
-  });
-}
-
+  async findByUserId(userId: string) {
+    return this.prisma.user.findUnique({
+      where: {
+        userId,
+      },
+      include: {
+        authIdentity: {
+          where: {
+            provider: 'LOCAL',
+          },
+        },
+      },
+    });
+  }
 }
