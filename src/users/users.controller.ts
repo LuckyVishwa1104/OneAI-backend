@@ -4,7 +4,9 @@ import { CreateUserDto } from './dto/user.dto';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+  ) {}
 
   @Get()
   findAll() {
@@ -12,7 +14,9 @@ export class UsersController {
   }
 
   @Post()
-  createUser(@Body() createUserDto: CreateUserDto) {
+  createUser(
+    @Body() createUserDto: CreateUserDto,
+  ) {
     return this.usersService.createUser(createUserDto);
   }
 }
