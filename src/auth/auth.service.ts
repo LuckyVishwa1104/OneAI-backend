@@ -1,37 +1,39 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { LoginDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
+import { UsersService } from '../users/users.service';
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
-    constructor(
+  constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
   ) {}
 
   async login(loginDto: LoginDto) {
-    const { email, password } = loginDto;
+    const { userId, password } = loginDto;
 
-    const user = await this.usersService.findByEmail(email);
+    const user = await this.usersService.findByUserId(userId);
 
-    if (!user) {
-      throw new UnauthorizedException('Invalid email or password');
+    if (!user || user.authIdentity.length === 0) {
+      throw new UnauthorizedException('Invalid user ID or password');
     }
+
+    const authIdentity = user.authIdentity[0];
 
     const passwordMatches = await bcrypt.compare(
       password,
-      user.password!,
+      authIdentity.passwordHash!,
     );
 
     if (!passwordMatches) {
-      throw new UnauthorizedException('Invalid email or password');
+      throw new UnauthorizedException('Invalid user ID or password');
     }
 
     const payload = {
       sub: user.id,
-      email: user.email,
+      userId: user.userId,
     };
 
     const accessToken = await this.jwtService.signAsync(payload);
@@ -41,9 +43,8 @@ export class AuthService {
       user: {
         id: user.id,
         name: user.name,
-        email: user.email,
+        userId: user.userId,
       },
     };
   }
-
 }
