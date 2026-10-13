@@ -1,8 +1,8 @@
 import {
   ConflictException,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
-
 import * as bcrypt from 'bcrypt';
 
 import { PrismaService } from '../prisma/prisma.service';
@@ -26,18 +26,11 @@ export class UsersService {
   }
 
   async createUser(createUserDto: CreateUserDto) {
-    const {
-      name,
-      userId,
-      password,
-      confirmPassword,
-    } = createUserDto;
+    const { name, userId, password, confirmPassword } = createUserDto;
 
     // Check password confirmation
     if (password !== confirmPassword) {
-      throw new ConflictException(
-        'Password and confirm password do not match',
-      );
+      throw new ConflictException('Password and confirm password do not match');
     }
 
     // Check if userId already exists
@@ -48,9 +41,7 @@ export class UsersService {
     });
 
     if (existingUser) {
-      throw new ConflictException(
-        'User with this user ID already exists',
-      );
+      throw new ConflictException('User with this user ID already exists');
     }
 
     // Hash password
@@ -79,6 +70,59 @@ export class UsersService {
     });
   }
 
+  async findOrCreateGoogleUser(data: {
+    providerUserId: string;
+    email?: string;
+    name?: string;
+  }) {
+    const { providerUserId, email, name } = data;
+
+    // 1. Check whether this Google account already exists.
+    const existingIdentity = await this.prisma.authIdentity.findUnique({
+      where: {
+        provider_providerUserId: {
+          provider: 'GOOGLE',
+          providerUserId,
+        },
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    if (existingIdentity) {
+      return existingIdentity.user;
+    }
+
+    // 2. Avoid silently creating a duplicate account when
+    // the email already belongs to another OneAI user.
+    if (email) {
+      const existingEmail = await this.prisma.user.findUnique({
+        where: { email },
+      });
+
+      if (existingEmail) {
+        throw new ConflictException(
+          'An account with this email already exists. Sign in with that account or implement account linking.',
+        );
+      }
+    }
+
+    // 3. Create the OneAI user and Google identity together.
+    return this.prisma.user.create({
+      data: {
+        name: name || 'Google User',
+        email: email || null,
+        authIdentity: {
+          create: {
+            provider: 'GOOGLE',
+            providerUserId,
+          },
+        },
+      },
+    });
+  }
+
   async findByUserId(userId: string) {
     return this.prisma.user.findUnique({
       where: {
@@ -95,18 +139,18 @@ export class UsersService {
   }
 
   async findById(id: number) {
-  return this.prisma.user.findUnique({
-    where: {
-      id,
-    },
-    select: {
-      id: true,
-      name: true,
-      userId: true,
-      email: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-  });
-}
+    return this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        name: true,
+        userId: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  }
 }
