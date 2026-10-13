@@ -5,6 +5,7 @@ import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/login.dto';
 import { OAuth2Client } from 'google-auth-library';
 import { ConfigService } from '@nestjs/config';
+import { firebaseAdminAuth } from '../firebase/firebase-admin';
 
 @Injectable()
 export class AuthService {
@@ -21,14 +22,51 @@ export class AuthService {
   }
 
   async verifyGoogleToken(idToken: string) {
-    const ticket = await this.googleClient.verifyIdToken({
-      idToken,
-      audience: this.configService.get<string>('GOOGLE_CLIENT_ID'),
+    try {
+      const decodedToken = await firebaseAdminAuth.verifyIdToken(idToken);
+
+      return {
+        sub: decodedToken.uid,
+        email: decodedToken.email,
+        email_verified: decodedToken.email_verified,
+        name: decodedToken.name,
+      };
+    } catch {
+      throw new UnauthorizedException('Invalid or expired Firebase ID token');
+    }
+  }
+
+  async googleLogin(idToken: string) {
+    const googleUser = await this.verifyGoogleToken(idToken);
+
+    if (!googleUser?.sub || googleUser.email_verified !== true) {
+      throw new UnauthorizedException(
+        'Invalid Google account or unverified email',
+      );
+    }
+
+    const user = await this.usersService.findOrCreateGoogleUser({
+      providerUserId: googleUser.sub,
+      email: googleUser.email,
+      name: googleUser.name,
     });
 
-    const payload = ticket.getPayload();
+    const payload = {
+      sub: user.id,
+      userId: user.userId,
+    };
 
-    return payload;
+    const accessToken = await this.jwtService.signAsync(payload);
+
+    return {
+      accessToken,
+      user: {
+        id: user.id,
+        name: user.name,
+        userId: user.userId,
+        email: user.email,
+      },
+    };
   }
 
   async login(loginDto: LoginDto) {
