@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
@@ -6,6 +10,9 @@ import { LoginDto } from './dto/login.dto';
 import { OAuth2Client } from 'google-auth-library';
 import { ConfigService } from '@nestjs/config';
 import { firebaseAdminAuth } from '../firebase/firebase-admin';
+import { createRemoteJWKSet, jwtVerify } from 'jose';
+import { createHash } from 'crypto';
+import { AppleAuthDto } from './dto/apple-auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -69,6 +76,85 @@ export class AuthService {
     };
   }
 
+  async verifyAppleToken(identityToken: string, rawNonce: string) {
+    const clientId = this.configService.get<string>('APPLE_CLIENT_ID');
+
+    if (!clientId) {
+      throw new InternalServerErrorException(
+        'Apple authentication is not configured',
+      );
+    }
+
+    try {
+      const { payload } = await jwtVerify(identityToken, appleJwks, {
+        issuer: 'https://appleid.apple.com',
+        audience: clientId,
+        algorithms: ['RS256'],
+      });
+
+      const expectedNonce = createHash('sha256').update(rawNonce).digest('hex');
+
+      if (!payload.sub) {
+        throw new UnauthorizedException('Invalid Apple user identity');
+      }
+
+      if (
+        typeof payload.nonce !== 'string' ||
+        payload.nonce !== expectedNonce
+      ) {
+        throw new UnauthorizedException('Invalid Apple authentication nonce');
+      }
+
+      return {
+        sub: payload.sub,
+        email: typeof payload.email === 'string' ? payload.email : undefined,
+        emailVerified:
+          payload.email_verified === true || payload.email_verified === 'true',
+      };
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
+
+      console.error('Apple token verification failed:', error);
+
+      throw new UnauthorizedException(
+        'Invalid or expired Apple identity token',
+      );
+    }
+  }
+
+  async appleLogin(data: AppleAuthDto) {
+    const appleUser = await this.verifyAppleToken(
+      data.identityToken!,
+      data.nonce!,
+    );
+
+    const user = await this.usersService.findOrCreateAppleUser({
+      providerUserId: appleUser.sub,
+      email: appleUser.email,
+      givenName: data.givenName,
+      familyName: data.familyName,
+    });
+
+    const payload = {
+      sub: user.id,
+      userId: user.userId,
+    };
+
+    const accessToken = await this.jwtService.signAsync(payload);
+
+    return {
+      accessToken,
+      user: {
+        id: user.id,
+        name: user.name,
+        userId: user.userId,
+        email: user.email,
+      },
+    };
+  }
+
   async login(loginDto: LoginDto) {
     const { userId, password } = loginDto;
 
@@ -106,3 +192,7 @@ export class AuthService {
     };
   }
 }
+
+const appleJwks = createRemoteJWKSet(
+  new URL('https://appleid.apple.com/auth/keys'),
+);
