@@ -4,6 +4,7 @@ import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { UsersService } from '../users/users.service';
 import { GoogleAuthDto } from './dto/google-auth.dto';
+import { AppleAuthDto } from './dto/apple-auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -20,6 +21,11 @@ export class AuthController {
   @Post('google')
   async googleLogin(@Body() googleAuthDto: GoogleAuthDto) {
     return this.authService.googleLogin(googleAuthDto.idToken);
+  }
+
+  @Post('apple')
+  async appleLogin(@Body() appleAuthDto: AppleAuthDto) {
+    return this.authService.appleLogin(appleAuthDto);
   }
 
   @Get('me')
