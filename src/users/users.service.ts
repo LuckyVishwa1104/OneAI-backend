@@ -12,19 +12,6 @@ import { CreateUserDto } from './dto/user.dto';
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll() {
-    return this.prisma.user.findMany({
-      select: {
-        id: true,
-        name: true,
-        userId: true,
-        email: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
-  }
-
   async createUser(createUserDto: CreateUserDto) {
     const { name, userId, password, confirmPassword } = createUserDto;
 
