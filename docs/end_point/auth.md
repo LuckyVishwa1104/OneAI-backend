@@ -12,7 +12,12 @@ Request body:
   "password": "Password@123"
 }
 
-Response:
+curl -X POST http://localhost:3000/auth/login \
+-H "Content-Type: application/json" \
+-d '{
+  "userId": "lucky123",
+  "password": "Password@123"
+}'
 
 
 # Google Login -
@@ -28,7 +33,11 @@ Request body:
   "idToken": "<FIREBASE_ID_TOKEN>"
 }
 
-Response:
+curl -X POST http://localhost:3000/auth/google \
+-H "Content-Type: application/json" \
+-d '{
+  "idToken": "YOUR_FIREBASE_ID_TOKEN"
+}'
 
 
 # Apple Login -
@@ -44,8 +53,6 @@ Request body:
   "idToken": "<FIREBASE_ID_TOKEN>"
 }
 
-Response:
-
 
 # Get current authenticated user - either manual/google/apple
 
@@ -57,6 +64,7 @@ Authorization: Bearer <ONEAI_JWT_TOKEN>
 
 Request body: not required
 
-Response: 
+curl -X GET http://localhost:3000/auth/me \
+-H "Authorization: Bearer YOUR_JWT_TOKEN" 
 
 

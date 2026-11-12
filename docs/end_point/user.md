@@ -14,6 +14,11 @@ Request body:
   "confirmPassword": "Password@123"
 }
 
-Response:
-
-
+curl -X POST http://localhost:3000/users \
+-H "Content-Type: application/json" \
+-d '{
+  "name": "Lucky Vishwakarma",
+  "userId": "lucky123",
+  "password": "Password@123",
+  "confirmPassword": "Password@123"
+}'
