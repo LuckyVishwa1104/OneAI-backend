@@ -1,98 +1,430 @@
+# ⚡ OneAI – Backend
+
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+  <strong>The Backend Powering a Unified AI Experience</strong>
+  <br/>
+  A scalable, modular backend built with NestJS, Fastify, Prisma and PostgreSQL.
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
+<p align="center">
+  <img src="https://img.shields.io/badge/Node.js-Runtime-339933?logo=node.js&logoColor=white" />
+  <img src="https://img.shields.io/badge/NestJS-Framework-E0234E?logo=nestjs&logoColor=white" />
+  <img src="https://img.shields.io/badge/TypeScript-Language-3178C6?logo=typescript&logoColor=white" />
+  <img src="https://img.shields.io/badge/Prisma-ORM-2D3748?logo=prisma&logoColor=white" />
+  <img src="https://img.shields.io/badge/PostgreSQL-Database-4169E1?logo=postgresql&logoColor=white" />
+  <img src="https://img.shields.io/badge/Render-Deployed-46E3B7?logo=render&logoColor=black" />
 </p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+<p align="center">
+  <img src="https://img.shields.io/badge/Architecture-Modular%20%26%20Layered-blueviolet" />
+  <img src="https://img.shields.io/badge/Authentication-JWT%20%2B%20Firebase-orange" />
+  <img src="https://img.shields.io/badge/Status-Active%20Development-success" />
+</p>
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+---
 
-## Project setup
+## 📌 Overview
 
-```bash
-$ npm install
+**OneAI** is an AI-powered application designed to bring multiple AI models and capabilities together under one unified platform.
+
+This repository contains the backend service responsible for authentication, user management, application business logic, database operations, and future AI orchestration.
+
+Built using **NestJS**, the backend follows a modular and layered architecture designed for maintainability, scalability, and extensibility.
+
+### 🎯 Project Vision
+
+- 🤖 Unified access to multiple AI providers.
+- 🔐 Secure authentication and authorization.
+- 💬 Intelligent conversations and chat management.
+- 📁 Project-based organization and file management.
+- ⚡ Scalable infrastructure for AI-powered workflows.
+
+> **Current Status:** Backend foundation, authentication, database integration, and initial deployment are implemented. Additional application and AI modules are under development.
+
+---
+
+## 🛠️ Technology Stack
+
+### Core Technologies
+
+| Category | Technology |
+|---|---|
+| 🟢 Runtime | Node.js |
+| 🚀 Framework | NestJS |
+| ⚡ HTTP Server | Fastify |
+| 💻 Language | TypeScript |
+| 🗄️ ORM | Prisma |
+| 🐘 Database | PostgreSQL (Supabase) |
+| 🔐 Authentication | Firebase Authentication |
+| 🔑 Authorization | JWT |
+| 🔒 Password Hashing | bcrypt |
+| 🧪 Testing | Jest |
+| ☁️ Hosting | Render |
+
+### 🔮 Planned Production Technologies
+
+| Category | Technology |
+|---|---|
+| 📦 File Storage | Amazon S3 |
+| ⚡ Caching | Redis |
+| 🔄 Background Jobs | BullMQ |
+| 🤖 AI Providers | OpenAI, Gemini, Claude |
+| 🌊 Streaming | Server-Sent Events (SSE) |
+| 📊 Monitoring | Sentry + AWS CloudWatch |
+
+---
+
+## 🏗️ System Architecture
+
+OneAI follows a client-server architecture where the Flutter application communicates exclusively with the NestJS backend.
+
+### Backend Architecture
+
+```text
+                 📱 Flutter Application
+                          |
+                          | HTTPS / REST
+                          |
+                          ▼
+                  ⚡ Fastify HTTP Server
+                          |
+                          ▼
+                     NestJS Modules
+                          |
+             ┌────────────┼────────────┐
+             |            |            |
+             ▼            ▼            ▼
+        Controllers    Services    Authentication
+             |            |
+             └─────┬──────┘
+                   |
+                   ▼
+               Prisma ORM
+                   |
+                   ▼
+          Supabase PostgreSQL
 ```
 
-## Compile and run the project
+### 🧩 Architectural Layers
 
-```bash
-# development
-$ npm run start
+- **Controllers:** Handle incoming HTTP requests and API responses.
+- **Services:** Contain application business logic.
+- **Repository / Data Access:** Manage database interactions through Prisma.
+- **Database:** PostgreSQL hosted on Supabase.
 
-# watch mode
-$ npm run start:dev
+---
 
-# production mode
-$ npm run start:prod
+## ✨ Implemented Features
+
+### 🔐 Authentication & Authorization
+
+- [✔︎] Manual user registration.
+- [✔︎] Manual user login.
+- [✔︎] Password hashing using bcrypt.
+- [✔︎] Google authentication through Firebase.
+- [✔︎] Firebase ID token verification.
+- [✔︎] OneAI JWT generation.
+- [✔︎] JWT-based protected routes.
+- [✔︎] Authenticated user profile retrieval.
+- [✔︎] Apple authentication backend implementation (provider configuration and end-to-end availability pending).
+
+### 👤 User Management
+
+- [✔︎] User registration and persistence.
+- [✔︎] User retrieval endpoint.
+- [✔︎] Separate authentication identity management.
+- [✔︎] Support for LOCAL, GOOGLE and APPLE identity types.
+
+### 🗄️ Database Integration
+
+- [✔︎] Supabase PostgreSQL integration.
+- [✔︎] Prisma ORM configuration.
+- [✔︎] PostgreSQL driver adapter.
+- [✔︎] Database schema and migrations.
+- [✔︎] Initial User and AuthIdentity models.
+
+### ⚙️ Backend Infrastructure
+
+- [✔︎] NestJS application setup.
+- [✔︎] Fastify integration.
+- [✔︎] Modular application structure.
+- [✔︎] Global configuration management.
+- [✔︎] Global request validation.
+- [✔︎] Environment-based port configuration.
+- [✔︎] Health-check endpoint.
+- [✔︎] Render deployment.
+
+---
+
+## 🔌 API Endpoints
+
+The following endpoints are currently implemented.
+
+| Method | Endpoint | Description |
+|---|---|---|
+| 🟢 GET | `/health` | Backend health check |
+| 🔵 POST | `/users` | Register a new user |
+| 🟢 GET | `/users` | Retrieve users |
+| 🔵 POST | `/auth/login` | Manual login |
+| 🔵 POST | `/auth/google` | Google authentication |
+| 🔵 POST | `/auth/apple` | Apple authentication |
+| 🟢 GET | `/auth/me` | Retrieve authenticated user |
+
+**Authentication:** `/auth/me` requires a valid OneAI JWT. Public and protected access for the other routes should follow the current controller and guard configuration.
+
+### ❤️ Health Check
+
+```http
+GET /health
 ```
 
-## Run tests
+Example response:
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+```json
+{
+  "status": "ok",
+  "service": "one-ai-backend",
+  "timestamp": "ISO-8601 timestamp"
+}
 ```
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## 🚀 Getting Started
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### 📋 Prerequisites
+
+Make sure you have the following installed:
+
+- Node.js
+- npm
+- Git
+- PostgreSQL / Supabase account
+
+### 1️⃣ Clone Repository
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+git clone https://github.com/LuckyVishwa1104/OneAI-backend.git
+
+cd OneAI-backend
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### 2️⃣ Install Dependencies
 
-## Resources
+```bash
+npm install
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+### 3️⃣ Configure Environment Variables
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+Create a `.env` file in the project root.
 
-## Support
+Refer to the Environment Variables section below.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### 4️⃣ Generate Prisma Client
 
-## Stay in touch
+```bash
+npx prisma generate
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### 5️⃣ Apply Database Migrations
 
-## License
+```bash
+npx prisma migrate deploy
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+### 6️⃣ Start Development Server
+
+```bash
+npm run start:dev
+```
+
+The backend will be available at:
+
+```text
+http://localhost:3000
+```
+
+### 7️⃣ Production Build
+
+```bash
+npm run build
+npm run start:prod
+```
+
+---
+
+## 🔑 Environment Variables
+
+The backend uses environment variables for database connections, authentication, and application configuration.
+
+| Variable | Description |
+|---|---|
+| `DATABASE_URL` | PostgreSQL connection URL |
+| `DIRECT_URL` | Direct database connection URL |
+| `JWT_SECRET` | OneAI JWT signing secret |
+| `GOOGLE_CLIENT_ID` | Google OAuth client ID |
+| `FIREBASE_PROJECT_ID` | Firebase project ID |
+| `FIREBASE_CLIENT_EMAIL` | Firebase service account email |
+| `FIREBASE_PRIVATE_KEY` | Firebase service account private key |
+| `APPLE_CLIENT_ID` | Apple authentication client ID |
+| `PORT` | Backend server port (default: 3000) |
+
+> ⚠️ **Security Notice:** Never commit `.env` files, private keys, JWT secrets, or database credentials. Configure production secrets through Render environment settings.
+
+---
+
+## 🗄️ Database Architecture
+
+OneAI uses **Supabase PostgreSQL** as its primary relational database, with Prisma ORM managing database operations.
+
+### Current Database Models
+
+**👤 User**
+
+Stores application user information.
+
+- `id`
+- `name`
+- `userId`
+- `email`
+- `createdAt`
+- `updatedAt`
+
+**🔐 AuthIdentity**
+
+Stores authentication-provider information separately from the user record.
+
+- `id`
+- `userId`
+- `provider`
+- `providerUserId`
+- `passwordHash`
+
+Supported providers:
+
+- `LOCAL`
+- `GOOGLE`
+- `APPLE`
+
+Database schema and migration history are maintained through Prisma.
+
+---
+
+## 🧪 Testing
+
+The backend uses Jest for automated testing.
+
+Run the test suite:
+
+```bash
+npm test -- --runInBand
+```
+
+### Latest Recorded Test Results
+
+```text
+Test Suites: 5 passed, 5 total
+Tests:       7 passed, 7 total
+```
+
+---
+
+## ☁️ Deployment
+
+The OneAI backend is currently deployed on **Render**.
+
+Deployment configuration includes:
+
+- Render web service.
+- Production environment variables.
+- Supabase PostgreSQL connectivity.
+- NestJS production build.
+- Health-check endpoint.
+
+The application listens on the port provided by Render and binds to `0.0.0.0`.
+
+---
+
+## 🗺️ Development Roadmap
+
+The following roadmap represents the planned development direction of OneAI.
+
+### Phase 1 – Backend Foundation & Authentication
+
+- [✔︎] NestJS application setup.
+- [✔︎] Fastify integration.
+- [✔︎] Prisma ORM integration.
+- [✔︎] Supabase PostgreSQL connection.
+- [✔︎] User registration and login.
+- [✔︎] Google authentication.
+- [✔︎] JWT authentication and authorization.
+- [✔︎] Render deployment.
+
+### Phase 2 – User & Application Management
+
+- [ ] User profile management.
+- [ ] User preferences and settings.
+- [ ] Project management APIs.
+- [ ] Conversation management APIs.
+- [ ] Chat history and message persistence.
+
+### Phase 3 – AI Integration & Orchestration
+
+- [ ] AI provider integration.
+- [ ] OpenAI integration.
+- [ ] Gemini integration.
+- [ ] Claude integration.
+- [ ] Model selection and orchestration.
+- [ ] Prompt management.
+
+### Phase 4 – Advanced Infrastructure
+
+- [ ] Server-Sent Events (SSE) streaming.
+- [ ] Amazon S3 file and image storage.
+- [ ] Redis caching.
+- [ ] BullMQ background processing.
+- [ ] Sentry error monitoring.
+- [ ] AWS CloudWatch monitoring.
+
+### Phase 5 – Production Readiness & Open Source
+
+- [ ] Expanded unit and integration testing.
+- [ ] API documentation.
+- [ ] Security and performance improvements.
+- [ ] Deployment optimization.
+- [ ] Contributor documentation.
+- [ ] Open-source release.
+
+---
+
+## 🧭 Guiding Principle
+
+> **The Flutter application communicates only with the NestJS backend.**
+
+https://one-ai-backend-jce9.onrender.com
+
+NestJS acts as the central orchestration layer and is responsible for interacting with external services such as Firebase Authentication, Supabase PostgreSQL, Amazon S3, Redis, BullMQ, and AI providers.
+
+This architectural separation:
+
+- 🔐 Centralizes business logic and improves security.
+- 🧩 Simplifies application maintenance.
+- 📈 Enables independent service scaling.
+- 🔄 Allows external services to be replaced without major changes to the Flutter application.
+
+---
+
+## 🤝 Contributing
+
+OneAI is being developed with the intention of becoming an open-source project.
+
+Contributor guidelines, development workflows, and contribution instructions will be added as the project approaches its public release.
+
+---
+
+<p align="center">
+  <strong>⚡ OneAI – Building a Unified AI Experience.</strong>
+  <br/>
+  <sub>One platform. Multiple AI models. One unified experience.</sub>
+</p>
